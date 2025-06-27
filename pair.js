@@ -77,14 +77,14 @@ var randomItem = selectRandomItem(items);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "KSMD~" + string_session;
                         let code = await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `*Hey Dear👋*\n\n*Don’t Share Your Session ID With Your Gf🤣*\n\n*Yep...This Is <| 𝐊𝐈𝐍𝐆-𝐒𝐀𝐍𝐃𝐄𝐒𝐇-𝐌𝐃👻*\n\n*THANKS FOR USING KING-SANDESH-MD*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴋɪɴɢ ꜱᴀɴᴅᴇꜱʜ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ👻\n`; 
+                        let desc = `*Hey Dear👋*\n\n*Don’t Share Your Session ID With Your Gf🤣*\n\n*Yep...This Is <| Arslan-MD👻*\n\n*THANKS FOR USING Arslan-MD*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306\n\n>POWERED BY ArslanMD Official👻\n`; 
                         await sock.sendMessage(sock.user.id, {
 text: desc,
 contextInfo: {
 externalAdReply: {
-title: "Professor Sandesh Bhashana",
-thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
+title: "Professor ArslanMD Official",
+thumbnailUrl: "https://files.catbox.moe/bxqan2.png",
+sourceUrl: "https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306",
 mediaType: 1,
 renderLargerThumbnail: true
 }  
@@ -93,14 +93,14 @@ renderLargerThumbnail: true
 {quoted:code })
                     } catch (e) {
                             let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `*Don't Share with anyone this code use for deploy KING-SANDESH-MD*\n\n ◦ *Github:* https://github.com/vijitharanawakage/KING-SANDESH-MD`;
+                            let desc = `*Don't Share with anyone this code use for deploy Arslan-MD*\n\n ◦ *Github:* https://github.com/Arslan-MD/Arslan-Ai`;
                             await sock.sendMessage(sock.user.id, {
 text: desc,
 contextInfo: {
 externalAdReply: {
-title: "KING-SANDESH-MD",
-thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
+title: "Arslan-MD",
+thumbnailUrl: "https://files.catbox.moe/bxqan2.png",
+sourceUrl: "https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306",
 mediaType: 2,
 renderLargerThumbnail: true,
 showAdAttribution: true
