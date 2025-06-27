@@ -25,7 +25,7 @@
     
     body {
       margin: 0;
-      padding: 0;
+      padding: 10px;
       min-height: 100vh;
       background: linear-gradient(135deg, var(--darker), var(--dark));
       display: flex;
@@ -40,27 +40,25 @@
     
     .main-container {
       width: 100%;
-      max-width: 96%;
-      padding: 1.5rem;
-      background: rgba(15, 12, 41, 0.9);
+      max-width: 100%;
+      padding: 15px;
+      background: rgba(15, 12, 41, 0.95);
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 1rem 0;
+      margin: 10px 0;
       position: relative;
-      overflow: hidden;
     }
     
     .header {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 15px;
     }
     
     .logo {
       width: 70px;
       height: 70px;
-      margin: 0 auto 1rem;
+      margin: 0 auto 10px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       display: flex;
@@ -80,40 +78,37 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 0.5rem;
+      margin-bottom: 5px;
       font-weight: 700;
+      line-height: 1.2;
     }
     
     .subtitle {
       font-size: 0.9rem;
       color: #aaa;
-      margin-bottom: 1rem;
+      margin-bottom: 15px;
+      line-height: 1.4;
     }
     
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
-      margin: 1.2rem 0;
+      gap: 10px;
+      margin: 15px 0;
     }
     
     .stat-item {
       text-align: center;
-      padding: 0.8rem;
+      padding: 12px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
-      transition: transform 0.2s;
-    }
-    
-    .stat-item:active {
-      transform: scale(0.98);
     }
     
     .stat-value {
       font-size: 1.4rem;
       font-weight: bold;
       color: var(--primary);
-      margin-bottom: 0.2rem;
+      margin-bottom: 5px;
     }
     
     .stat-label {
@@ -123,8 +118,8 @@
     
     .status {
       text-align: center;
-      margin: 1.2rem 0;
-      padding: 0.8rem;
+      margin: 15px 0;
+      padding: 12px;
       border-radius: 10px;
       background: rgba(0, 255, 231, 0.1);
       border-left: 4px solid var(--primary);
@@ -133,7 +128,7 @@
     .status-label {
       font-size: 0.8rem;
       color: #aaa;
-      margin-bottom: 0.3rem;
+      margin-bottom: 5px;
     }
     
     .status-value {
@@ -148,23 +143,19 @@
     .button-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.8rem;
-      margin: 1.5rem 0;
+      gap: 10px;
+      margin: 20px 0;
     }
     
     .button {
-      padding: 1rem;
+      padding: 15px;
       font-size: 1rem;
       font-weight: 600;
       border: none;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--secondary), #ff4b2b);
       color: white;
-      cursor: pointer;
       text-decoration: none;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -173,12 +164,8 @@
     }
     
     .button i {
-      margin-right: 8px;
+      margin-right: 10px;
       font-size: 1.1rem;
-    }
-    
-    .button:active {
-      transform: scale(0.98);
     }
     
     .button.qr {
@@ -201,106 +188,31 @@
       background: linear-gradient(135deg, #FF512F, #DD2476);
     }
     
-    .button.dashboard {
-      background: linear-gradient(135deg, #FF5F6D, #FFC371);
-    }
-    
-    .features {
-      margin: 1.5rem 0;
-    }
-    
-    .features h3 {
-      text-align: center;
-      margin-bottom: 1rem;
-      color: var(--primary);
-      font-size: 1.3rem;
-    }
-    
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.8rem;
-    }
-    
-    .feature-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .feature-icon {
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-    
-    .feature-title {
-      font-size: 1rem;
-      margin-bottom: 0.3rem;
-      color: white;
-    }
-    
-    .feature-desc {
-      font-size: 0.8rem;
-      color: #aaa;
-      line-height: 1.4;
-    }
-    
     footer {
       width: 100%;
-      background: rgba(15, 12, 41, 0.9);
       color: #aaa;
-      padding: 1rem;
+      padding: 15px;
       text-align: center;
       font-size: 0.8rem;
-      margin-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-      margin: 0.8rem 0;
-    }
-    
-    .social-link {
-      color: #aaa;
-      font-size: 1.2rem;
+      margin-top: 15px;
     }
     
     .copyright {
-      margin-top: 0.8rem;
+      margin-top: 10px;
     }
-    
-    /* Loading animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
-    .delay-4 { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
   <div class="main-container">
-    <div class="header fade-in">
+    <div class="header">
       <div class="logo">
         <i class="fas fa-robot"></i>
       </div>
       <h1>Arslan-MD Pro Max</h1>
-      <p class="subtitle">Ultimate WhatsApp Bot Control Panel</p>
+      <p class="subtitle">Ultimate WhatsApp<br>Bot Control Panel</p>
     </div>
     
-    <div class="stats fade-in delay-1">
+    <div class="stats">
       <div class="stat-item">
         <div class="stat-value">24/7</div>
         <div class="stat-label">Uptime</div>
@@ -319,12 +231,12 @@
       </div>
     </div>
     
-    <div class="status fade-in delay-2">
+    <div class="status">
       <div class="status-label">BOT STATUS</div>
       <div class="status-value online">ONLINE & OPERATIONAL</div>
     </div>
     
-    <div class="button-grid fade-in delay-3">
+    <div class="button-grid">
       <a href="/qr" class="button qr" target="_blank">
         <i class="fas fa-qrcode"></i> QR CODE
       </a>
@@ -340,55 +252,12 @@
       <a href="https://wa.me/923237045919" class="button support" target="_blank">
         <i class="fas fa-headset"></i> SUPPORT
       </a>
-      <a href="/dashboard" class="button dashboard" target="_blank">
-        <i class="fas fa-tachometer-alt"></i> DASHBOARD
-      </a>
-    </div>
-    
-    <div class="features fade-in delay-4">
-      <h3>✨ Premium Features</h3>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-bolt"></i>
-          </div>
-          <h4 class="feature-title">Ultra Fast</h4>
-          <p class="feature-desc">Optimized for mobile with lightning fast performance.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-shield-alt"></i>
-          </div>
-          <h4 class="feature-title">Secure</h4>
-          <p class="feature-desc">End-to-end encryption for all your communications.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-mobile-alt"></i>
-          </div>
-          <h4 class="feature-title">Mobile Optimized</h4>
-          <p class="feature-desc">Designed specifically for Android devices.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fas fa-brain"></i>
-          </div>
-          <h4 class="feature-title">AI Powered</h4>
-          <p class="feature-desc">Advanced AI capabilities for smart responses.</p>
-        </div>
-      </div>
     </div>
   </div>
   
-  <footer class="fade-in delay-4">
-    <div class="social-links">
-      <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-      <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-      <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-      <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-    </div>
+  <footer>
     <div class="copyright">
-      Arslan-MD Ultimate Pro Max &copy; <span id="currentYear"></span> | All Rights Reserved
+      Arslan-MD Ultimate Pro Max &copy; <span id="currentYear"></span>
     </div>
   </footer>
 
@@ -396,32 +265,10 @@
     // Set current year
     document.getElementById("currentYear").textContent = new Date().getFullYear();
     
-    // Improved touch feedback for buttons
-    document.querySelectorAll('.button').forEach(button => {
-      button.addEventListener('touchstart', () => {
-        button.style.transform = 'scale(0.98)';
-      });
-      
-      button.addEventListener('touchend', () => {
-        button.style.transform = 'scale(1)';
-      });
-    });
-    
     // Prevent zooming on double-tap
     document.addEventListener('dblclick', (e) => {
       e.preventDefault();
     }, { passive: false });
-    
-    // Optimized for mobile performance
-    if ('connection' in navigator) {
-      if (navigator.connection.saveData || navigator.connection.effectiveType.includes('2g')) {
-        // Reduce animations for slow connections
-        document.querySelectorAll('.fade-in').forEach(el => {
-          el.style.animation = 'none';
-          el.style.opacity = '1';
-        });
-      }
-    }
   </script>
 </body>
-            </html>
+</html>
