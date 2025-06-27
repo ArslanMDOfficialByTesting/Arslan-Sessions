@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: kango-pair-site
+    env: docker
+    plan: free
+    branch: main
+    repo: https://github.com/vijitharanawakage/Ksmd-Session-Gen
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
