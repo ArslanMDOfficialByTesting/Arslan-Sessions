@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Arslan-MD | Ultimate Pro Max</title>
+  <title>Arslan-MD | Control Panel</title>
   <link rel="shortcut icon" href="https://files.catbox.moe/bxqan2.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -12,8 +12,6 @@
       --secondary: #ff416c;
       --success: #32cd32;
       --dark: #0f0c29;
-      --darker: #090618;
-      --light: #f8f9fa;
     }
     
     * {
@@ -27,27 +25,23 @@
       margin: 0;
       padding: 10px;
       min-height: 100vh;
-      background: linear-gradient(135deg, var(--darker), var(--dark));
+      background: var(--dark);
       display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: white;
-      position: relative;
       overflow-x: hidden;
       touch-action: manipulation;
     }
     
-    .main-container {
+    .container {
       width: 100%;
       max-width: 100%;
       padding: 15px;
       background: rgba(15, 12, 41, 0.95);
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 10px 0;
-      position: relative;
+      border-radius: 12px;
+      margin: 0 auto;
+      flex: 1;
     }
     
     .header {
@@ -56,73 +50,67 @@
     }
     
     .logo {
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       margin: 0 auto 10px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 15px var(--primary);
     }
     
     .logo i {
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: white;
     }
     
     h1 {
-      font-size: 1.8rem;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      font-size: 1.5rem;
+      color: var(--primary);
       margin-bottom: 5px;
       font-weight: 700;
-      line-height: 1.2;
     }
     
     .subtitle {
       font-size: 0.9rem;
       color: #aaa;
       margin-bottom: 15px;
-      line-height: 1.4;
     }
     
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 15px 0;
+      gap: 8px;
+      margin-bottom: 15px;
     }
     
     .stat-item {
       text-align: center;
-      padding: 12px;
+      padding: 10px;
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
+      border-radius: 8px;
     }
     
     .stat-value {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: var(--primary);
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
     
     .stat-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #aaa;
     }
     
     .status {
       text-align: center;
       margin: 15px 0;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 10px;
+      border-radius: 8px;
       background: rgba(0, 255, 231, 0.1);
-      border-left: 4px solid var(--primary);
+      border-left: 3px solid var(--primary);
     }
     
     .status-label {
@@ -132,84 +120,60 @@
     }
     
     .status-value {
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: bold;
-    }
-    
-    .status-value.online {
       color: var(--success);
     }
     
-    .button-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+    .buttons {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
-      margin: 20px 0;
+      margin: 15px 0;
     }
     
     .button {
-      padding: 15px;
-      font-size: 1rem;
+      padding: 12px;
+      font-size: 0.95rem;
       font-weight: 600;
       border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--secondary), #ff4b2b);
+      border-radius: 8px;
+      background: var(--secondary);
       color: white;
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(255, 65, 108, 0.2);
+      display: block;
     }
     
     .button i {
-      margin-right: 10px;
-      font-size: 1.1rem;
+      margin-right: 8px;
     }
     
     .button.qr {
-      background: linear-gradient(135deg, #00b09b, #96c93d);
+      background: #00b09b;
     }
     
     .button.pair {
-      background: linear-gradient(135deg, #4776E6, #8E54E9);
-    }
-    
-    .button.github {
-      background: linear-gradient(135deg, #333, #6e5494);
-    }
-    
-    .button.whatsapp {
-      background: linear-gradient(135deg, #25D366, #128C7E);
-    }
-    
-    .button.support {
-      background: linear-gradient(135deg, #FF512F, #DD2476);
+      background: #4776E6;
     }
     
     footer {
-      width: 100%;
-      color: #aaa;
-      padding: 15px;
       text-align: center;
-      font-size: 0.8rem;
-      margin-top: 15px;
-    }
-    
-    .copyright {
+      padding: 10px;
+      font-size: 0.75rem;
+      color: #777;
       margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="main-container">
+  <div class="container">
     <div class="header">
       <div class="logo">
         <i class="fas fa-robot"></i>
       </div>
-      <h1>Arslan-MD Pro Max</h1>
-      <p class="subtitle">Ultimate WhatsApp<br>Bot Control Panel</p>
+      <h1>Arslan-MD Pro</h1>
+      <p class="subtitle">WhatsApp Bot Control Panel</p>
     </div>
     
     <div class="stats">
@@ -233,42 +197,32 @@
     
     <div class="status">
       <div class="status-label">BOT STATUS</div>
-      <div class="status-value online">ONLINE & OPERATIONAL</div>
+      <div class="status-value">ONLINE</div>
     </div>
     
-    <div class="button-grid">
+    <div class="buttons">
       <a href="/qr" class="button qr" target="_blank">
         <i class="fas fa-qrcode"></i> QR CODE
       </a>
       <a href="/pair" class="button pair" target="_blank">
         <i class="fas fa-link"></i> PAIRING CODE
       </a>
-      <a href="https://github.com/Arslan-MD/Arslan-Ai/fork" class="button github" target="_blank">
+      <a href="https://github.com/Arslan-MD/Arslan-Ai/fork" class="button" target="_blank">
         <i class="fab fa-github"></i> FORK REPO
       </a>
-      <a href="https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306" class="button whatsapp" target="_blank">
-        <i class="fab fa-whatsapp"></i> WHATSAPP
-      </a>
-      <a href="https://wa.me/923237045919" class="button support" target="_blank">
+      <a href="https://wa.me/923237045919" class="button" target="_blank">
         <i class="fas fa-headset"></i> SUPPORT
       </a>
     </div>
   </div>
   
   <footer>
-    <div class="copyright">
-      Arslan-MD Ultimate Pro Max &copy; <span id="currentYear"></span>
-    </div>
+    Arslan-MD &copy; <span id="year"></span>
   </footer>
 
   <script>
-    // Set current year
-    document.getElementById("currentYear").textContent = new Date().getFullYear();
-    
-    // Prevent zooming on double-tap
-    document.addEventListener('dblclick', (e) => {
-      e.preventDefault();
-    }, { passive: false });
+    document.getElementById("year").textContent = new Date().getFullYear();
+    document.addEventListener('dblclick', (e) => e.preventDefault());
   </script>
 </body>
 </html>
