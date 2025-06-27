@@ -3,29 +3,23 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore, getAggregateVotesInPollMessage, DisconnectReason, WA_DEFAULT_EPHEMERAL, jidNormalizedUser, proto, getDevice, generateWAMessageFromContent, fetchLatestBaileysVersion, makeInMemoryStore, getContentType, generateForwardMessageContent, downloadContentFromMessage, jidDecode } = require('@whiskeysockets/baileys')
+const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys')
 
 const { upload } = require('./mega');
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
+
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
+
     async function GIFTED_MD_PAIR_CODE() {
-        const {
-            state,
-            saveCreds
-        } = await useMultiFileAuthState('./temp/' + id);
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+
         try {
-var items = ["Safari"];
-function selectRandomItem(array) {
-  var randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-var randomItem = selectRandomItem(items);
-            
+            const browserLabel = Browsers.macOS("Safari");
             let sock = makeWASocket({
                 auth: {
                     creds: state.creds,
@@ -35,8 +29,9 @@ var randomItem = selectRandomItem(items);
                 generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 syncFullHistory: false,
-                browser: Browsers.macOS(randomItem)
+                browser: browserLabel
             });
+
             if (!sock.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
@@ -45,93 +40,69 @@ var randomItem = selectRandomItem(items);
                     await res.send({ code });
                 }
             }
+
             sock.ev.on('creds.update', saveCreds);
+
             sock.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
 
-    const {
-                    connection,
-                    lastDisconnect
-                } = s;
-                
-                if (connection == "open") {
+                if (connection === "open") {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    let rf = __dirname + `/temp/${id}/creds.json`;
-                    function generateRandomText() {
-                        const prefix = "3EB";
-                        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                        let randomText = prefix;
-                        for (let i = prefix.length; i < 22; i++) {
-                            const randomIndex = Math.floor(Math.random() * characters.length);
-                            randomText += characters.charAt(randomIndex);
+
+                    const credsPath = `./temp/${id}/creds.json`;
+                    const credsBuffer = fs.readFileSync(credsPath);
+
+                    // Upload to MEGA
+                    const mega_url = await upload(fs.createReadStream(credsPath), `${sock.user.id}.json`);
+                    const sessionID = mega_url.replace('https://mega.nz/file/', '');
+                    const sessionCode = "ARSLANMD~" + sessionID;
+
+                    // 📎 Also send creds.json as document
+                    await sock.sendMessage(sock.user.id, {
+                        document: credsBuffer,
+                        mimetype: 'application/json',
+                        fileName: 'creds.json',
+                        caption: '✅ Here is your creds.json file (keep it safe)'
+                    });
+
+                    // 📢 Send session string message
+                    const desc = `*Hey Dear👋*\n\n*Don’t Share Your Session ID With Anyone❗*\n\n*Yep...This Is <| Arslan-MD👻*\n\n*THANKS FOR USING Arslan-MD*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306\n\n>POWERED BY ArslanMD Official👻`;
+
+                    const codeMsg = await sock.sendMessage(sock.user.id, { text: sessionCode });
+                    await sock.sendMessage(sock.user.id, {
+                        text: desc,
+                        contextInfo: {
+                            externalAdReply: {
+                                title: "Professor ArslanMD Official",
+                                thumbnailUrl: "https://files.catbox.moe/bxqan2.png",
+                                sourceUrl: "https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306",
+                                mediaType: 1,
+                                renderLargerThumbnail: true
+                            }
                         }
-                        return randomText;
-                    }
-                    const randomText = generateRandomText();
-                    try {
+                    }, { quoted: codeMsg });
 
-
-                        
-                        const { upload } = require('./mega');
-                        const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
-                        const string_session = mega_url.replace('https://mega.nz/file/', '');
-                        let md = "KSMD~" + string_session;
-                        let code = await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `*Hey Dear👋*\n\n*Don’t Share Your Session ID With Your Gf🤣*\n\n*Yep...This Is <| Arslan-MD👻*\n\n*THANKS FOR USING Arslan-MD*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306\n\n>POWERED BY ArslanMD Official👻\n`; 
-                        await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "Professor ArslanMD Official",
-thumbnailUrl: "https://files.catbox.moe/bxqan2.png",
-sourceUrl: "https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306",
-mediaType: 1,
-renderLargerThumbnail: true
-}  
-}
-},
-{quoted:code })
-                    } catch (e) {
-                            let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `*Don't Share with anyone this code use for deploy Arslan-MD*\n\n ◦ *Github:* https://github.com/Arslan-MD/Arslan-Ai`;
-                            await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "Arslan-MD",
-thumbnailUrl: "https://files.catbox.moe/bxqan2.png",
-sourceUrl: "https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306",
-mediaType: 2,
-renderLargerThumbnail: true,
-showAdAttribution: true
-}  
-}
-},
-{quoted:ddd })
-                    }
                     await delay(10);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
-                    console.log(`👤 ${sock.user.id} 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗲𝗱 ✅ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...`);
+                    console.log(`👤 ${sock.user.id} Connected ✅ Restarting...`);
                     await delay(10);
                     process.exit();
-                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                } else if (connection === "close" && lastDisconnect?.error?.output?.statusCode !== 401) {
                     await delay(10);
                     GIFTED_MD_PAIR_CODE();
                 }
             });
         } catch (err) {
-            console.log("service restated");
+            console.log("service restarted");
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
                 await res.send({ code: "❗ Service Unavailable" });
             }
         }
     }
-   return await GIFTED_MD_PAIR_CODE();
-});/*
-setInterval(() => {
-    console.log("☘️ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...");
-    process.exit();
-}, 180000); //30min*/
+
+    return await GIFTED_MD_PAIR_CODE();
+});
+
 module.exports = router;
