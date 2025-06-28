@@ -1,31 +1,25 @@
-const express = require("express");
-const fs = require("fs");
-const path = require("path");
+const { makeid } = require('./gen-id');
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const pino = require("pino");
-const { makeid } = require("./gen-id");
-const { upload } = require("./mega");
-const {
-  default: makeWASocket,
-  useMultiFileAuthState,
-  Browsers,
-  makeCacheableSignalKeyStore,
-  delay,
-} = require("@whiskeysockets/baileys");
+const { 
+  default: makeWASocket, 
+  useMultiFileAuthState, 
+  delay, 
+  Browsers, 
+  makeCacheableSignalKeyStore 
+} = require('@whiskeysockets/baileys');
 
 const router = express.Router();
-const SESSION_DIR = path.join(__dirname, "temp");
-const PAIR_MAP = {}; // Stores session status by id
-
-function removeDir(dir) {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
-}
+const PAIR_MAP = {}; // keep track of active pairings
 
 router.get("/init", async (req, res) => {
+  console.log("[INIT] Called with number:", req.query.number);
+
   const id = makeid(8);
   const number = req.query.number?.replace(/[^0-9]/g, "");
-  const sessionPath = path.join(SESSION_DIR, id);
+  const sessionPath = path.join(__dirname, "temp", id);
 
   if (!number) return res.status(400).json({ error: "Number is required" });
 
@@ -52,52 +46,11 @@ router.get("/init", async (req, res) => {
     }
   } catch (err) {
     console.error("[INIT ERROR]", err);
-    removeDir(sessionPath);
-    return res.status(500).json({ error: err.message });
+    res.status(500).json({
+      error: err.message,
+      stack: err.stack?.split("\n").slice(0, 5),
+    });
   }
-});
-
-router.get("/status/:id", async (req, res) => {
-  const { id } = req.params;
-  const pair = PAIR_MAP[id];
-
-  if (!pair) return res.status(404).json({ error: "Invalid ID" });
-
-  const { sock, sessionPath } = pair;
-
-  if (pair.status === "paired") {
-    return res.json({ status: "paired", session_id: pair.session_id });
-  }
-
-  sock.ev.on("connection.update", async ({ connection }) => {
-    if (connection === "open") {
-      try {
-        const credsFile = path.join(sessionPath, "creds.json");
-        const stream = fs.createReadStream(credsFile);
-        const uploadedUrl = await upload(stream, `${sock.user.id}.json`);
-        const sessionId = `ARSLANMD~${uploadedUrl.replace("https://mega.nz/file/", "")}`;
-
-        pair.status = "paired";
-        pair.session_id = sessionId;
-
-        await sock.sendMessage(sock.user.id, {
-          text: `*SESSION ID:*
-${sessionId}
-
-Don't share with anyone.`,
-        });
-
-        await delay(3000);
-        await sock.ws.close();
-        removeDir(sessionPath);
-      } catch (e) {
-        console.error("[SESSION UPLOAD ERROR]", e);
-        pair.status = "failed";
-      }
-    }
-  });
-
-  res.json({ status: pair.status });
 });
 
 module.exports = router;
