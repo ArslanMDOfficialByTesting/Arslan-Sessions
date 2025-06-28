@@ -24,9 +24,10 @@ router.get('/', async (req, res) => {
 
   if (!num) return res.status(400).json({ error: "Number required (923001234567)" });
 
+  let responseSent = false; // 🔥 Single response control
+
   try {
     const { state, saveCreds } = await useMultiFileAuthState(`${SESSION_DIR}/${id}`);
-    let responseSent = false;
 
     const sock = makeWASocket({
       auth: {
@@ -34,9 +35,9 @@ router.get('/', async (req, res) => {
         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
       },
       printQRInTerminal: false,
-      browser: ["Chrome (Linux)", "", ""], // WhatsApp Web compatible
+      browser: ["Ubuntu", "Chrome", "122.0.0.0"],
       logger: pino({ level: "silent" }),
-      connectTimeoutMs: 60000
+      connectTimeoutMs: 30000
     });
 
     sock.ev.on('creds.update', saveCreds);
@@ -63,25 +64,26 @@ router.get('/', async (req, res) => {
 
       if (connection === "close") {
         if (!responseSent && lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
-          res.json({ error: "Connection closed. Retry after 2 minutes." });
+          responseSent = true;
+          res.status(408).json({ error: "Connection timeout. Retry after 2 minutes." });
         }
       }
     });
 
     if (!sock.authState.creds.registered) {
       const code = await sock.requestPairingCode(num);
-      if (!responseSent) return res.json({ code: code.replace(/\s/g, '') });
+      if (!responseSent) {
+        responseSent = true;
+        return res.json({ code: code.replace(/\s/g, '') });
+      }
     }
 
   } catch (error) {
     if (!responseSent) {
+      responseSent = true;
       res.status(500).json({ 
         error: "WhatsApp rejected pairing",
-        solution: [
-          "1. Use FRESH WhatsApp number",
-          "2. Wait 1 hour if multiple attempts",
-          "3. Try on different network"
-        ]
+        solution: "1. Use fresh number\n2. Wait 1 hour\n3. Try different network"
       });
     }
     removeFile(`${SESSION_DIR}/${id}`);
