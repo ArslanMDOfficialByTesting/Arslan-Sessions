@@ -1,55 +1,78 @@
 const { makeid } = require('./gen-id');
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
+const router = express.Router();
 const pino = require("pino");
 const { 
-  default: makeWASocket, 
+  makeWASocket, 
   useMultiFileAuthState, 
   delay, 
   Browsers, 
   makeCacheableSignalKeyStore 
 } = require('@whiskeysockets/baileys');
 
-const router = express.Router();
-const PAIR_MAP = {}; // keep track of active pairings
+// ✅ Shared Session Directory
+const SESSION_DIR = './session'; 
 
-router.get("/init", async (req, res) => {
-  console.log("[INIT] Called with number:", req.query.number);
+async function removeFile(path) {
+  if (fs.existsSync(path)) {
+    fs.rmSync(path, { recursive: true, force: true });
+  }
+}
 
-  const id = makeid(8);
-  const number = req.query.number?.replace(/[^0-9]/g, "");
-  const sessionPath = path.join(__dirname, "temp", id);
-
-  if (!number) return res.status(400).json({ error: "Number is required" });
+router.get('/', async (req, res) => {
+  const id = makeid();
+  let num = req.query.number?.replace(/[^0-9]/g, '');
 
   try {
-    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
+    const { state, saveCreds } = await useMultiFileAuthState(`${SESSION_DIR}/${id}`);
+
     const sock = makeWASocket({
       auth: {
         creds: state.creds,
         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
       },
-      browser: Browsers.macOS("Safari"),
-      logger: pino({ level: "silent" }),
       printQRInTerminal: false,
+      browser: Browsers.macOS("Safari"),
+      logger: pino({ level: "silent" })
     });
 
-    sock.ev.on("creds.update", saveCreds);
+    sock.ev.on('creds.update', saveCreds);
 
-    if (!sock.authState.creds.registered) {
-      const code = await sock.requestPairingCode(number);
-      PAIR_MAP[id] = { sock, sessionPath, status: "pending", session_id: null };
-      return res.json({ id, code });
-    } else {
-      return res.status(400).json({ error: "Number already registered." });
+    sock.ev.on("connection.update", async (update) => {
+      const { connection, lastDisconnect } = update;
+
+      if (connection === "open") {
+        // ✅ Send session via WhatsApp
+        const credsPath = `${SESSION_DIR}/${id}/creds.json`;
+        const sessionCode = `ARSLANMD~${fs.readFileSync(credsPath, 'utf8')}`;
+        
+        await sock.sendMessage(sock.user.id, { 
+          text: `*SESSION CODE:*\n${sessionCode}\n\nKeep this safe!` 
+        });
+
+        // 🚨 Cleanup
+        await sock.ws.close();
+        await removeFile(`${SESSION_DIR}/${id}`);
+        process.exit(0);
+      }
+      
+      if (connection === "close") {
+        if (lastDisconnect?.error?.output?.statusCode !== 401) {
+          setTimeout(() => GIFTED_MD_PAIR_CODE(), 5000);
+        }
+      }
+    });
+
+    if (!sock.authState.creds.registered && num) {
+      const code = await sock.requestPairingCode(num);
+      res.json({ code });
     }
-  } catch (err) {
-    console.error("[INIT ERROR]", err);
-    res.status(500).json({
-      error: err.message,
-      stack: err.stack?.split("\n").slice(0, 5),
-    });
+
+  } catch (error) {
+    console.error("Pairing Error:", error);
+    res.status(500).json({ error: "Service unavailable" });
+    await removeFile(`${SESSION_DIR}/${id}`);
   }
 });
 
