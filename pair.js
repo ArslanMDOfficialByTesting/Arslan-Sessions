@@ -12,17 +12,15 @@ const {
   DisconnectReason
 } = require('@whiskeysockets/baileys');
 
-const SESSION_DIR = './session'; // Shared session folder
+const SESSION_DIR = './session';
 
-// File cleanup utility
 async function removeFile(path) {
   if (fs.existsSync(path)) {
     fs.rmSync(path, { recursive: true, force: true });
   }
 }
 
-// Main pairing function
-async function handlePairing(req, res) {
+router.get('/', async (req, res) => {
   const id = makeid();
   let num = req.query.number?.replace(/[^0-9]/g, '');
 
@@ -32,6 +30,7 @@ async function handlePairing(req, res) {
 
   try {
     const { state, saveCreds } = await useMultiFileAuthState(`${SESSION_DIR}/${id}`);
+    let responseSent = false; // 🔥 Critical fix
 
     const sock = makeWASocket({
       auth: {
@@ -49,42 +48,48 @@ async function handlePairing(req, res) {
       const { connection, lastDisconnect } = update;
 
       if (connection === "open") {
-        console.log("Pairing successful!");
+        if (responseSent) return; // 🔥 Prevent duplicate responses
         
-        // Get session data
         const credsPath = `${SESSION_DIR}/${id}/creds.json`;
-        const sessionData = fs.readFileSync(credsPath, 'utf8');
-        const sessionCode = `ARSLANMD~${Buffer.from(sessionData).toString('base64')}`;
+        const sessionCode = `ARSLANMD~${fs.readFileSync(credsPath, 'base64')}`;
+        
+        // Send final response
+        if (!responseSent) {
+          responseSent = true;
+          res.json({ 
+            status: "success",
+            session: sessionCode 
+          });
+        }
 
-        // Send to user
-        await sock.sendMessage(sock.user.id, { 
-          text: `*YOUR SESSION CODE:*\n${sessionCode}\n\nKeep this safe!` 
-        });
-
-        // Cleanup
         await sock.ws.close();
         await removeFile(`${SESSION_DIR}/${id}`);
         process.exit(0);
       }
 
-      if (connection === "close") {
-        if (lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
-          setTimeout(() => handlePairing(req, res), 5000);
-        }
+      if (connection === "close" && lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
+        setTimeout(() => {
+          if (!responseSent) {
+            res.json({ error: "Connection failed, retrying..." });
+          }
+        }, 5000);
       }
     });
 
     if (!sock.authState.creds.registered) {
       const code = await sock.requestPairingCode(num);
-      return res.json({ code });
+      if (!responseSent) {
+        responseSent = true;
+        return res.json({ code });
+      }
     }
 
   } catch (error) {
-    console.error("Pairing Error:", error);
-    await removeFile(`${SESSION_DIR}/${id}`);
-    return res.status(500).json({ error: "Pairing failed" });
+    console.error("Error:", error);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Pairing failed" });
+    }
   }
-}
+});
 
-router.get('/', handlePairing);
 module.exports = router;
