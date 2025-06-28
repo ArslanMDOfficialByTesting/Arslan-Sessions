@@ -15,18 +15,14 @@ const {
 const SESSION_DIR = './session';
 
 async function removeFile(path) {
-  if (fs.existsSync(path)) {
-    fs.rmSync(path, { recursive: true, force: true });
-  }
+  if (fs.existsSync(path)) fs.rmSync(path, { recursive: true });
 }
 
 router.get('/', async (req, res) => {
   const id = makeid();
   let num = req.query.number?.replace(/[^0-9]/g, '');
 
-  if (!num || num.length < 10) {
-    return res.status(400).json({ error: "Invalid number format (923001234567)" });
-  }
+  if (!num) return res.status(400).json({ error: "Number required (923001234567)" });
 
   try {
     const { state, saveCreds } = await useMultiFileAuthState(`${SESSION_DIR}/${id}`);
@@ -38,75 +34,57 @@ router.get('/', async (req, res) => {
         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
       },
       printQRInTerminal: false,
-      browser: Browsers.windows("Chrome", "122.0.0.0"), // Latest Chrome
+      browser: ["Chrome (Linux)", "", ""], // WhatsApp Web compatible
       logger: pino({ level: "silent" }),
-      syncFullHistory: false,
-      connectTimeoutMs: 30000 // 30 seconds timeout
+      connectTimeoutMs: 60000
     });
 
     sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on("connection.update", async (update) => {
+    sock.ev.on("connection.update", (update) => {
       const { connection, lastDisconnect } = update;
 
       if (connection === "open") {
         if (responseSent) return;
-        
+        responseSent = true;
+
         const credsPath = `${SESSION_DIR}/${id}/creds.json`;
-        const sessionData = fs.readFileSync(credsPath);
-        const sessionCode = `ARSLANMD~${sessionData.toString('base64')}`;
+        const sessionCode = `ARSLANMD~${fs.readFileSync(credsPath, 'base64')}`;
 
-        if (!responseSent) {
-          responseSent = true;
-          res.json({ 
-            status: "success",
-            session: sessionCode,
-            message: "Save this session ID in config.cjs"
-          });
-        }
+        res.json({ 
+          status: "success",
+          session: sessionCode 
+        });
 
-        await sock.ws.close();
-        await removeFile(`${SESSION_DIR}/${id}`);
+        sock.ws.close();
+        removeFile(`${SESSION_DIR}/${id}`);
         process.exit(0);
       }
 
       if (connection === "close") {
-        if (lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
-          setTimeout(() => {
-            if (!responseSent) res.json({ error: "Reconnecting..." });
-          }, 5000);
+        if (!responseSent && lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
+          res.json({ error: "Connection closed. Retry after 2 minutes." });
         }
       }
     });
 
     if (!sock.authState.creds.registered) {
-      try {
-        const code = (await sock.requestPairingCode(num)).replace(/\s+/g, '');
-        if (!responseSent) {
-          responseSent = true;
-          return res.json({ 
-            code: code,
-            format: "Enter EXACTLY as shown (no spaces)"
-          });
-        }
-      } catch (e) {
-        if (!responseSent) {
-          return res.status(500).json({ 
-            error: "WhatsApp rejected the code",
-            solution: "1. Use different number\n2. Wait 1 hour\n3. Update Baileys"
-          });
-        }
-      }
+      const code = await sock.requestPairingCode(num);
+      if (!responseSent) return res.json({ code: code.replace(/\s/g, '') });
     }
 
   } catch (error) {
-    console.error("Fatal Error:", error);
     if (!responseSent) {
-      return res.status(500).json({ 
-        error: "Server error",
-        details: error.message 
+      res.status(500).json({ 
+        error: "WhatsApp rejected pairing",
+        solution: [
+          "1. Use FRESH WhatsApp number",
+          "2. Wait 1 hour if multiple attempts",
+          "3. Try on different network"
+        ]
       });
     }
+    removeFile(`${SESSION_DIR}/${id}`);
   }
 });
 
