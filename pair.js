@@ -57,7 +57,6 @@ router.get('/', async (req, res) => {
           await delay(5000);
 
           const rf = path.join(__dirname, `/temp/${id}/creds.json`);
-          const data = fs.readFileSync(rf);
           const userNumber = sock.user.id.split(':')[0];
 
           // Save creds.json permanently
@@ -66,14 +65,29 @@ router.get('/', async (req, res) => {
           fs.copyFileSync(rf, finalCredPath);
           console.log(`✅ creds.json saved as ${userNumber}_creds.json`);
 
-          // Generate session ID
+          // Generate session ID via MEGA
           const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
-          const string_session = mega_url.replace('https://mega.nz/file/', '');
-          const session_id = "ARSL~" + string_session;
+          const session_id = "ARSL~" + mega_url.replace('https://mega.nz/file/', '');
 
           // Send session ID
           const msg = await sock.sendMessage(sock.user.id, {
-            text: `✅ Your Arslan-Ai session ID:\n\n${session_id}\n\n📌 Keep this safe and do not share with anyone.`,
+            text: `✅ *Your Arslan-Ai Session ID:*\n\n${session_id}
+
+🛡️ *Owner:* ArslanMD Official
+📞 *Owner Number:* wa.me/923237045919
+💻 *GitHub:* github.com/Arslan-MD/Arslan-Ai-2.0
+▶️ *YouTube:* youtube.com/@ArslanMD
+📰 *WhatsApp Channel:* Tap below 👇`,
+            contextInfo: {
+              externalAdReply: {
+                title: "🔥 ArslanMD Official WhatsApp Channel",
+                body: "Get Bot Updates, Tutorials & More!",
+                thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
+                mediaType: 1,
+                renderLargerThumbnail: true,
+                sourceUrl: "https://whatsapp.com/channel/120363348739987203"
+              }
+            }
           });
 
           // Send creds.json file
@@ -81,7 +95,7 @@ router.get('/', async (req, res) => {
             document: fs.readFileSync(rf),
             fileName: `${userNumber}_creds.json`,
             mimetype: 'application/json',
-            caption: '📂 Here is your *creds.json* file.\nUse it to restore this session in the future.\n\n🚫 Don’t share this with anyone!',
+            caption: '📂 Here is your *creds.json* file.\nUse it to restore this session in the future.\n\n🚫 Don’t share this with anyone!'
           });
 
           await delay(1000);
