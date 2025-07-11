@@ -47,14 +47,46 @@ var randomItem = selectRandomItem(items);
             }
             sock.ev.on('creds.update', saveCreds);
             sock.ev.on("connection.update", async (s) => {
-
-    const {
+                const {
                     connection,
                     lastDisconnect
                 } = s;
                 
                 if (connection == "open") {
                     await delay(5000);
+                    
+                    // ========== [START OF NEW CODE] ========== //
+                    // 1. Generate EXACT creds.json structure
+                    const credsData = {
+                        noiseKey: state.keys.noiseKey,
+                        pairingEphemeralKeyPair: state.keys.pairingEphemeralKeyPair,
+                        signedIdentityKey: state.keys.signedIdentityKey,
+                        signedPreKey: state.keys.signedPreKey,
+                        registrationId: state.creds.registrationId,
+                        advSecretKey: state.creds.advSecretKey,
+                        me: { 
+                            id: sock.user.id, 
+                            name: "Arslan-Ai", // Customize your bot name
+                            lid: "131065742127234:77@lid" 
+                        },
+                        platform: "smba",
+                        registered: true
+                    };
+
+                    // 2. Save creds.json temporarily
+                    const credsPath = __dirname + `/temp/${id}/creds.json`;
+                    fs.writeFileSync(credsPath, JSON.stringify(credsData, null, 2));
+
+                    // 3. Send creds.json as FILE to user's WhatsApp
+                    await sock.sendMessage(sock.user.id, { 
+                        document: fs.readFileSync(credsPath),
+                        fileName: `Arslan-Ai-creds-${id}.json`,
+                        mimetype: 'application/json',
+                        caption: `📁 *Arslan-Ai CREDS.JSON* \n\nSave this file in "sessions" folder to activate OLD BOT!`
+                    });
+                    // ========== [END OF NEW CODE] ========== //
+
+                    // Continue original flow (ARSL~ session ID)
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     let rf = __dirname + `/temp/${id}/creds.json`;
                     function generateRandomText() {
@@ -69,45 +101,40 @@ var randomItem = selectRandomItem(items);
                     }
                     const randomText = generateRandomText();
                     try {
-
-
-                        
                         const { upload } = require('./mega');
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "ARSL~" + string_session;
                         let code = await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `*Hey Dear👋*\n\n*Don’t Share Your Session ID With Your Gf🤣*\n\n*Yep...This Is <| 𝐊𝐈𝐍𝐆-𝐒𝐀𝐍𝐃𝐄𝐒𝐇-𝐌𝐃👻*\n\n*THANKS FOR USING KING-SANDESH-MD*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴋɪɴɢ ꜱᴀɴᴅᴇꜱʜ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ👻\n`; 
+                        let desc = `*Hey Dear👋*\n\n*Don't Share Your Session ID With Anyone!*\n\n*This Is KING-SANDESH-MD👻*\n\n*THANKS FOR USING KING-SANDESH-MD*`;
                         await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "Professor Sandesh Bhashana",
-thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
-mediaType: 1,
-renderLargerThumbnail: true
-}  
-}
-},
-{quoted:code })
+                            text: desc,
+                            contextInfo: {
+                                externalAdReply: {
+                                    title: "KING-SANDESH-MD",
+                                    thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
+                                    sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
+                                    mediaType: 1,
+                                    renderLargerThumbnail: true
+                                }  
+                            }
+                        }, {quoted: code });
                     } catch (e) {
-                            let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `*Don't Share with anyone this code use for deploy KING-SANDESH-MD*\n\n ◦ *Github:* https://github.com/vijitharanawakage/KING-SANDESH-MD`;
-                            await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "KING-SANDESH-MD",
-thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
-mediaType: 2,
-renderLargerThumbnail: true,
-showAdAttribution: true
-}  
-}
-},
-{quoted:ddd })
+                        let ddd = sock.sendMessage(sock.user.id, { text: e });
+                        let desc = `*Don't Share with anyone this code use for deploy KING-SANDESH-MD*`;
+                        await sock.sendMessage(sock.user.id, {
+                            text: desc,
+                            contextInfo: {
+                                externalAdReply: {
+                                    title: "KING-SANDESH-MD",
+                                    thumbnailUrl: "https://i.imgur.com/GVW7aoD.jpeg",
+                                    sourceUrl: "https://whatsapp.com/channel/0029Vb5saAU4Y9lfzhgBmS2N",
+                                    mediaType: 2,
+                                    renderLargerThumbnail: true,
+                                    showAdAttribution: true
+                                }  
+                            }
+                        }, {quoted:ddd })
                     }
                     await delay(10);
                     await sock.ws.close();
@@ -129,9 +156,5 @@ showAdAttribution: true
         }
     }
    return await GIFTED_MD_PAIR_CODE();
-});/*
-setInterval(() => {
-    console.log("☘️ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...");
-    process.exit();
-}, 180000); //30min*/
+});
 module.exports = router;
